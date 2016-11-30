@@ -13,9 +13,12 @@ return [
     |
     */
 
-    'login_failed' => 'This email do not match our records.',
-    'invalid_password' => 'The password does not match.',
+    'login_failed' => 'Este email não esta cadastrado.',
+    'invalid_password' => 'A senha não corresponde ao email informado.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-    'email_already_taken' => 'This email is already taken.'
+    'email_already_taken' => 'Este email já esta sendo utilizado.',
+    'wrong_user' => 'Você não tem permissão para editar este usuário.',
+    'expired_token' => 'Você precisa logar novamente.',
+    'email_not_found' => 'Este email não foi encontrado em nossa base de dados.'
 
 ];
