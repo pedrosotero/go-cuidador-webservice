@@ -14,7 +14,7 @@ class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        $db_user = User::where('email', $request->email)->first();
+        $db_user = User::select('users.*', 'clients.id as client_id')->where('email', $request->email)->join('clients', 'clients.user_id', '=', 'users.id')->first();
 
         if ($db_user) {
             if (Hash::check($request->password, $db_user->password)) {
@@ -26,7 +26,7 @@ class LoginController extends Controller
                 $db_user->save();
 
                 return response()->json([
-                    'user_id' => $db_user->id
+                    'user_id' => $db_user->client_id
                 ])->header('token', $db_user->token);
             } else {
                 return response()->json(['password' => [trans('auth.invalid_password')]], 400);

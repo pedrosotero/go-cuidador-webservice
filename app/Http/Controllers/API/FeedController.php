@@ -15,8 +15,8 @@ class FeedController extends Controller
             ->leftJoin('caregiver_types', 'caregiver_types.caregiver_id', '=', 'caregivers.id')
             ->leftJoin('types', 'types.id', '=', 'caregiver_types.type_id')
             ->select(
-                ['caregivers.id', 'first_name', 'last_name', 'neighborhood',
-                    DB::raw('AVG(rate) as rate, GROUP_CONCAT(types.title SEPARATOR \', \') as types'),
+                ['caregivers.id', 'first_name', 'last_name', 'neighborhood', 'avatar',
+                    DB::raw('round(AVG(rate)) as rate, GROUP_CONCAT(types.title SEPARATOR \', \') as types'),
                 ])->groupBy('id')->where('paid', 1)->where('deleted_at', null)->get();
 
         return response()->json($caregivers);
@@ -36,7 +36,9 @@ class FeedController extends Controller
                     'phone',
                     'email',
                     'neighborhood',
-                    DB::raw('AVG(rate) as rate, GROUP_CONCAT(types.title SEPARATOR \', \') as types'),
+                    'avatar',
+                    'caregivers.description',
+                    DB::raw('round(AVG(rate)) as rate, GROUP_CONCAT(types.title SEPARATOR \', \') as types'),
                 ])->groupBy('id')
             ->where('paid', 1)
             ->where('caregivers.id', $id)
