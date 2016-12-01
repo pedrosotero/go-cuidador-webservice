@@ -5,3 +5,5 @@
 Homestead.json
 Homestead.yaml
 .env
+public/media_upload
+public/css

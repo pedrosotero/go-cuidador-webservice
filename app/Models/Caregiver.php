@@ -18,13 +18,14 @@ class Caregiver extends Model
         'cpf',
         'uf',
         'city',
-        'neiborhood',
+        'neighborhood',
         'address',
         'paid',
         'phone',
         'avatar',
         'description',
-        'doc'
+        'doc',
+        'zipcode'
     ];
 
     public function user()

@@ -11,6 +11,10 @@
 |
 */
 
+Route::resource('caregivers', 'CaregiverController', ['only' => ['store']]);
+Route::get('/success', function () {
+    return view('success');
+})->name('caregiver.success');
 Route::get('/', function () {
     return view('welcome');
 });
