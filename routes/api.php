@@ -24,6 +24,7 @@ Route::group(['namespace' => 'API\Auth'], function () {
     Route::group(['middleware' => 'token'], function () {
         Route::resource('users', 'UserController', ['except' => ['store']]);
         Route::post('change_password/{id}', ['as' => 'users.change.password', 'uses' => 'UserController@changePassword']);
+        Route::post('delete_account/{id}', ['as' => 'users.delete.account', 'uses' => 'UserController@deleteAccount']);
     });
 });
 

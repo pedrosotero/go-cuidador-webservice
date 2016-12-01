@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'login_failed' => 'Este email não esta cadastrado.',
+    'login_failed' => 'Este email não esta cadastrado ou o usuário foi deletado.',
     'invalid_password' => 'A senha não corresponde ao email informado.',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
     'email_already_taken' => 'Este email já esta sendo utilizado.',

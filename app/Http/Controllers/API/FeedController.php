@@ -15,9 +15,10 @@ class FeedController extends Controller
             ->leftJoin('caregiver_types', 'caregiver_types.caregiver_id', '=', 'caregivers.id')
             ->leftJoin('types', 'types.id', '=', 'caregiver_types.type_id')
             ->select(
-                ['caregivers.id', 'first_name', 'last_name', 'neighborhood', 'avatar',
+                ['caregivers.id', 'caregivers.first_name', 'caregivers.last_name', 'caregivers.neighborhood', 'caregivers.avatar',
                     DB::raw('round(AVG(rate)) as rate, GROUP_CONCAT(types.title SEPARATOR \', \') as types'),
-                ])->groupBy('id')->where('paid', 1)->where('deleted_at', null)->get();
+                ])
+            ->groupBy(['caregivers.id', 'caregivers.first_name', 'caregivers.last_name', 'caregivers.neighborhood', 'caregivers.avatar'])->where('paid', 1)->where('deleted_at', null)->get();
 
         return response()->json($caregivers);
     }
@@ -28,18 +29,25 @@ class FeedController extends Controller
             ->leftJoin('rates', 'rates.caregiver_id', '=', 'caregivers.id')
             ->leftJoin('caregiver_types', 'caregiver_types.caregiver_id', '=', 'caregivers.id')
             ->leftJoin('types', 'types.id', '=', 'caregiver_types.type_id')
-            ->select(
-                [
-                    'caregivers.id',
-                    'first_name',
-                    'last_name',
-                    'phone',
-                    'email',
-                    'neighborhood',
-                    'avatar',
-                    'caregivers.description',
-                    DB::raw('round(AVG(rate)) as rate, GROUP_CONCAT(types.title SEPARATOR \', \') as types'),
-                ])->groupBy('id')
+            ->select([
+                'caregivers.id',
+                'first_name',
+                'last_name',
+                'phone',
+                'email',
+                'neighborhood',
+                'avatar',
+                'caregivers.description',
+                DB::raw('round(AVG(rate)) as rate, GROUP_CONCAT(types.title SEPARATOR \', \') as types'),
+            ])->groupBy([
+                'caregivers.id',
+                'first_name',
+                'last_name',
+                'phone',
+                'email',
+                'neighborhood',
+                'avatar',
+                'caregivers.description'])
             ->where('paid', 1)
             ->where('caregivers.id', $id)
             ->where('caregivers.deleted_at', null)

@@ -13,6 +13,7 @@ use JWTFactory;
 use App;
 use Mail;
 use Illuminate\Support\Facades\URL;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -189,15 +190,32 @@ class UserController extends Controller
 
         $user = $request->get('loggedUser');
 
-        if ($user->id == $id) {
-            $newPassword = [
-                'password' => Hash::make($request->password),
-            ];
-            $user->update($newPassword);
+        $newPassword = [
+            'password' => Hash::make($request->password),
+        ];
 
-            return response()->json(['ok' => true], 201);
-        } else {
-            return response()->json(['user' => [trans('auth.wrong_user')]], 403);
+        $user->update($newPassword);
+
+        return response()->json(['ok' => true], 201);
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = $request->get('loggedUser');
+
+        $db_user = User::find($user->id);
+
+        if ($db_user) {
+            if (Hash::check($request->password, $db_user->password)) {
+                $db_user->deleted_at = Carbon::now();
+                $db_user->save();
+
+                return response()->json([
+                    'user_id' => $db_user->client_id
+                ])->header('token', '');
+            } else {
+                return response()->json(['password' => [trans('auth.invalid_password')]], 400);
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        $db_user = User::select('users.*', 'clients.id as client_id')->where('email', $request->email)->join('clients', 'clients.user_id', '=', 'users.id')->first();
+        $db_user = User::select('users.*', 'clients.id as client_id')->where('email', $request->email)->join('clients', 'clients.user_id', '=', 'users.id')->where('users.deleted_at', null)->first();
 
         if ($db_user) {
             if (Hash::check($request->password, $db_user->password)) {
