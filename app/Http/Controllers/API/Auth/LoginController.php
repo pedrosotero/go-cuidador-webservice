@@ -39,41 +39,46 @@ class LoginController extends Controller
     public function facebook_login(Request $request)
     {
         $email = $request->email;
-        $db_user = User::where('email', $email)->first();
+        $db_user = User::select('users.*', 'clients.id as client_id')->where('email', $request->email)->join('clients', 'clients.user_id', '=', 'users.id')->where('users.deleted_at', null)->first();
         $customClaims = ['id' => env('JWT_CUSTOM_CLAIM'), 'username' => $email];
         $payload = JWTFactory::make($customClaims);
         $token = JWTAuth::encode($payload);
         $token = (string) $token;
 
         if ( ! $db_user) {
-
             $userForCreation = array(
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
                 'email' => $email,
                 'password' => Hash::make($email),
                 'facebook_id' => $request->facebook_id,
-                'token' => $token
+                'numbers' => 2
             );
 
             $db_user = User::create($userForCreation);
 
+            $db_user->token = $token;
+            $db_user->save();
+
+            $db_user->client()->create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name
+            ]);
+
             return response()->json([
-                'user_id' => $db_user->id
+                'id' => $db_user->client->id
             ])->header(
                 'token', $db_user->token
             );
 
         } else {
-            $db_user->token = $token;
-            $db_user->facebook_id = $request->facebook_id;
-            $db_user->save();
+            $user = User::find($db_user->id);
+            $user->token = $token;
+            $user->facebook_id = $request->facebook_id;
+            $user->save();
 
             return response()->json([
-                'user_id' => $db_user->id,
-                'avatar' => $db_user->avatar
+                'id' => $db_user->client_id
             ])->header(
-                'token', $db_user->token
+                'token', $user->token
             );
         }
     }

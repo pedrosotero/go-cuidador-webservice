@@ -37,26 +37,28 @@ class UserController extends Controller
 
         $customClaims = ['id' => env('JWT_CUSTOM_CLAIM'), 'username' => $request->email];
         $payload = JWTFactory::make($customClaims);
-
         $token = JWTAuth::encode($payload);
 
+        $token = (string) $token;
         $userForCreation = [
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'jwt_token' => (string) $token,
             'numbers' => 2
         ];
 
         $db_user = User::create($userForCreation);
 
-        $db_user->client()->create([
+        $db_user->token = $token;
+        $db_user->save();
+
+        $client = $db_user->client()->create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name
         ]);
 
         return response()->json([
-            'id' => $db_user->id
-        ], 201)->header('token', $db_user->jwt_token);
+            'id' => $client->id
+        ], 201)->header('token', $db_user->token);
     }
 
 

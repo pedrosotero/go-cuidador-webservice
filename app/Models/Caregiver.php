@@ -23,7 +23,8 @@ class Caregiver extends Model
         'paid',
         'phone',
         'avatar',
-        'description'
+        'description',
+        'doc'
     ];
 
     public function user()
